@@ -11,11 +11,11 @@ const Sushi = (props) => {
           false ?
             null
           :
-            <img src={ sushi.img } width="100%" />
+            <img src={ sushi.img_url } width="100%" />
         }
       </div>
       <h4 className="sushi-details">
-        { sushi.name } - ${ sushi.price }
+        { sushi.name } - ${sushi.price }
       </h4>
     </div>
   )

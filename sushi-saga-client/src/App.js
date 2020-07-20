@@ -14,22 +14,19 @@ class App extends Component {
   }
 
   componentDidMount() {
-    this.getSushi(this.state.sushiPage);
+    this.getSushi();
   }
 
-  getSushi = async() => {
+  getSushi = async () => {
     const sushi = await (await fetch(API)).json();
-    this.setState({ sushi });
-    this.provideSushi();
+    this.setState({ sushi }, () => this.provideSushi(this.state.sushiPage));
   }
 
-  provideSushi = (page) => {
-    const { sushiPage } = this.state;
+  provideSushi = page => {
     const lowRange = ((page * 4 ) - 4 )
     const highRange = ((page * 4)) 
     const sushi = this.state.sushi.filter(sushi => sushi.id > lowRange && sushi.id <= highRange)
     this.setState({ paginatedSushi: sushi })
-    console.log(sushi);
   }
 
   nextSushiPage = () => {
@@ -37,13 +34,10 @@ class App extends Component {
       { sushiPage: (this.state.sushiPage + 1)  },
       () => this.provideSushi(this.state.sushiPage)
     )
-    
-    console.log("hello");
   }
 
   render() {
     const { sushiPage, paginatedSushi } = this.state;
-    // const sushi = this.provideSushi()
     return (
       <div className="app">
         <SushiContainer nextSushi={ this.nextSushiPage } sushi={ paginatedSushi } sushiPage={ sushiPage }/>
