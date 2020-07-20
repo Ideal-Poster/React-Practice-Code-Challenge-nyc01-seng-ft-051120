@@ -9,36 +9,44 @@ class App extends Component {
 
   state = {
     sushi: [],
-    sushiPage: 1
+    sushiPage: 4,
+    paginatedSushi: []
   }
 
   componentDidMount() {
-    this.getSushi();
-
-    setTimeout(() => {
-      this.provideSushi()
-      
-    }, 1000);
+    this.getSushi(this.state.sushiPage);
   }
 
   getSushi = async() => {
     const sushi = await (await fetch(API)).json();
     this.setState({ sushi });
+    this.provideSushi();
   }
 
-
-  provideSushi = () => {
+  provideSushi = (page) => {
     const { sushiPage } = this.state;
-    const lowRange = ((sushiPage * 4 ) - 4 )
-    const highRange = (sushiPage * 4) 
-    return this.state.sushi.filter(sushi => sushi.id > lowRange && sushi.id < highRange)
+    const lowRange = ((page * 4 ) - 4 )
+    const highRange = ((page * 4)) 
+    const sushi = this.state.sushi.filter(sushi => sushi.id > lowRange && sushi.id <= highRange)
+    this.setState({ paginatedSushi: sushi })
+    console.log(sushi);
+  }
+
+  nextSushiPage = () => {
+    this.setState(
+      { sushiPage: (this.state.sushiPage + 1)  },
+      () => this.provideSushi(this.state.sushiPage)
+    )
+    
+    console.log("hello");
   }
 
   render() {
-    const { sushi, sushiPage } = this.state;
+    const { sushiPage, paginatedSushi } = this.state;
+    // const sushi = this.provideSushi()
     return (
       <div className="app">
-        <SushiContainer sushi={ sushi } sushiPage={ sushiPage }/>
+        <SushiContainer nextSushi={ this.nextSushiPage } sushi={ paginatedSushi } sushiPage={ sushiPage }/>
         <Table />
       </div>
     );
